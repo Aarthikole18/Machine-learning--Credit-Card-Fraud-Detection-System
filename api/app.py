@@ -3,20 +3,17 @@ from pydantic import BaseModel
 import joblib
 import numpy as np
 
-# =========================
-# LOAD MODEL & SCALER
-# =========================
-model = joblib.load("models/model.pkl")
-scaler = joblib.load("models/scaler.pkl")
+# -----------------------------
+# LOAD MODEL
+# -----------------------------
+model = joblib.load("models/fraud_model.pkl")
 
 app = FastAPI(title="Credit Card Fraud Detection API")
 
-
-# =========================
-# INPUT FORMAT
-# =========================
+# -----------------------------
+# INPUT SCHEMA
+# -----------------------------
 class Transaction(BaseModel):
-    Time: float
     V1: float
     V2: float
     V3: float
@@ -47,64 +44,31 @@ class Transaction(BaseModel):
     V28: float
     Amount: float
 
-
-# =========================
-# HOME ROUTE
-# =========================
+# -----------------------------
+# HOME
+# -----------------------------
 @app.get("/")
 def home():
-    return {"message": "Fraud Detection API is Running 🚀"}
+    return {"message": "Fraud Detection API Running"}
 
-
-# =========================
-# PREDICTION ROUTE
-# =========================
+# -----------------------------
+# PREDICT ENDPOINT
+# -----------------------------
 @app.post("/predict")
-def predict(transaction: Transaction):
+def predict(tx: Transaction):
 
-    # convert input to array
-    data = np.array([[  
-        transaction.Time,
-        transaction.V1,
-        transaction.V2,
-        transaction.V3,
-        transaction.V4,
-        transaction.V5,
-        transaction.V6,
-        transaction.V7,
-        transaction.V8,
-        transaction.V9,
-        transaction.V10,
-        transaction.V11,
-        transaction.V12,
-        transaction.V13,
-        transaction.V14,
-        transaction.V15,
-        transaction.V16,
-        transaction.V17,
-        transaction.V18,
-        transaction.V19,
-        transaction.V20,
-        transaction.V21,
-        transaction.V22,
-        transaction.V23,
-        transaction.V24,
-        transaction.V25,
-        transaction.V26,
-        transaction.V27,
-        transaction.V28,
-        transaction.Amount
+    data = np.array([[
+        tx.V1, tx.V2, tx.V3, tx.V4, tx.V5, tx.V6, tx.V7,
+        tx.V8, tx.V9, tx.V10, tx.V11, tx.V12, tx.V13, tx.V14,
+        tx.V15, tx.V16, tx.V17, tx.V18, tx.V19, tx.V20,
+        tx.V21, tx.V22, tx.V23, tx.V24, tx.V25, tx.V26,
+        tx.V27, tx.V28, tx.Amount
     ]])
 
-    # scale
-    data_scaled = scaler.transform(data)
-
-    # predict
-    prediction = model.predict(data_scaled)[0]
-    probability = model.predict_proba(data_scaled)[0][1]
+    prob = model.predict_proba(data)[0][1]
+    prediction = "FRAUD" if prob > 0.5 else "LEGIT"
 
     return {
-        "fraud_prediction": int(prediction),
-        "fraud_probability": float(probability),
-        "result": "FRAUD 🚨" if prediction == 1 else "NORMAL ✅"
+        "fraud_probability": float(prob),
+        "prediction": prediction
     }

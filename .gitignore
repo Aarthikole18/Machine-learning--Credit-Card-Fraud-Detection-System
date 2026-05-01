@@ -1,11 +1,6 @@
 venv/
 __pycache__/
-*.pyc
 *.pkl
 *.joblib
-data/raw/
-.env
-.DS_Store
 data/
-*.csv
-*.zip
+.ipynb_checkpoints/

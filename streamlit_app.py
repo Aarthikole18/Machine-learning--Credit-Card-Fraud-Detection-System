@@ -1,76 +1,43 @@
 import streamlit as st
-import requests
+import numpy as np
+import pandas as pd
+import joblib
 
-st.set_page_config(page_title="Fraud Detection System", layout="wide")
+# Load model
+model = joblib.load("models/fraud_model.pkl")
 
-# =========================
-# HEADER
-# =========================
+st.set_page_config(page_title="Fraud Detection System", layout="centered")
+
 st.title("💳 Credit Card Fraud Detection System")
-st.markdown("### Real-time AI Fraud Detection Dashboard")
+st.write("Enter transaction details to check fraud risk")
 
 st.divider()
 
-# =========================
-# SIDEBAR INPUT (CLEAN UI)
-# =========================
-st.sidebar.header("Transaction Input")
+# Input fields (V1 to V28)
+features = []
 
-def input_features():
+for i in range(1, 29):
+    features.append(st.number_input(f"V{i}", value=0.0))
 
-    Time = st.sidebar.number_input("Time", value=0.0)
-    Amount = st.sidebar.number_input("Amount", value=0.0)
+time = st.number_input("Time", value=0.0)
+amount = st.number_input("Amount", value=0.0)
 
-    V = []
-    for i in range(1, 29):
-        V.append(st.sidebar.number_input(f"V{i}", value=0.0))
-
-    return Time, V, Amount
-
-
-Time, V, Amount = input_features()
-
-# =========================
-# MAIN PANEL
-# =========================
-col1, col2, col3 = st.columns(3)
-
-col1.metric("Model", "Random Forest")
-col2.metric("System", "Live API")
-col3.metric("Status", "Active 🟢")
+input_data = [time, amount] + features
+input_df = pd.DataFrame([input_data])
 
 st.divider()
 
-# =========================
-# PREDICT BUTTON
-# =========================
-if st.button("🚀 Check Fraud"):
+if st.button("Check Fraud"):
+    prob = model.predict_proba(input_df)[0][1]
+    pred = model.predict(input_df)[0]
 
-    url = "http://127.0.0.1:8000/predict"
+    st.subheader("Result")
 
-    data = {
-        "Time": Time,
-        "Amount": Amount
-    }
+    st.progress(int(prob * 100))
 
-    for i in range(28):
-        data[f"V{i+1}"] = V[i]
-
-    response = requests.post(url, json=data)
-
-    if response.status_code == 200:
-        result = response.json()
-
-        st.subheader("Prediction Result")
-
-        if result["fraud_prediction"] == 1:
-            st.error("🚨 FRAUD DETECTED!")
-            st.markdown("### ❌ Transaction Blocked")
-        else:
-            st.success("✅ LEGITIMATE TRANSACTION")
-            st.markdown("### ✔ Transaction Approved")
-
-        st.metric("Fraud Probability", f"{result['fraud_probability']:.4f}")
-
+    if pred == 1:
+        st.error(f"⚠ FRAUD DETECTED (Risk: {prob:.2f})")
     else:
-        st.error("API not running")
+        st.success(f"✅ LEGIT TRANSACTION (Risk: {prob:.2f})")
+
+    st.write("Probability Score:", round(prob, 4))

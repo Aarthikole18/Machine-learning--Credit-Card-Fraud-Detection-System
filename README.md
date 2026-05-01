@@ -1,70 +1,78 @@
-# 💳 Credit Card Fraud Detection System
+💳 Credit Card Fraud Detection System
+🚀 Overview
 
-## 🚀 Overview
-An end-to-end Machine Learning system that detects fraudulent credit card transactions in real-time using a trained classification model. The system includes a FastAPI backend and a Streamlit dashboard for live predictions.
+An end-to-end Machine Learning system that detects fraudulent credit card transactions using a trained classification model.
+It includes a FastAPI backend for serving predictions and a Streamlit dashboard for real-time interaction.
 
----
+🎯 Problem Statement
 
-## 🎯 Problem Statement
-Fraudulent transactions cause huge financial losses in banking systems. The goal is to detect fraud accurately while minimizing false alerts.
+Fraudulent transactions cause huge financial losses in banking systems.
+This project focuses on building a model that accurately detects fraud while minimizing false positives.
 
----
+🧠 Solution Approach
+Trained ML model on credit card transaction dataset
+Handled class imbalance using SMOTE
+Built REST API using FastAPI
+Created interactive dashboard using Streamlit
+Enabled real-time prediction pipeline
+🏗️ System Architecture
 
-## 🧠 Solution
-- Trained ML model on transaction data
-- Handled class imbalance using SMOTE
-- Built REST API using FastAPI
-- Created interactive dashboard using Streamlit
-- Enabled real-time fraud prediction
+Streamlit UI → FastAPI Backend → Trained ML Model → Prediction Output
 
----
+⚙️ Tech Stack
+Python
+Pandas, NumPy
+Scikit-learn
+Imbalanced-learn (SMOTE)
+FastAPI
+Streamlit
+Joblib / Pickle
 
-## 🏗️ Architecture
-Streamlit UI → FastAPI → ML Model → Prediction → Result
+📊 Features
+Real-time fraud detection
+Probability score output
+Clean interactive UI
+REST API for predictions
+Saved ML model for reuse
 
----
-
-## ⚙️ Tech Stack
-- Python
-- Scikit-learn
-- Pandas, NumPy
-- FastAPI
-- Streamlit
-- Imbalanced-learn
-
----
-
-## 📊 Features
-- Real-time fraud detection
-- Probability scoring
-- Interactive dashboard
-- API-based architecture
-- Model persistence
-
----
-
-## 🚀 How to Run
-
-### 1. Train Model
-```bash
+🚀 How to Run the Project
+1️⃣ Install dependencies
+pip install -r requirements.txt
+2️⃣ Train the model
 python src/train.py
+3️⃣ Run FastAPI backend
+uvicorn api.app:app --reload
 
-### 2. Start API
-python -m uvicorn api.app:app --reload
+👉 Open API docs:
 
-###3. Start UI
+http://127.0.0.1:8000/docs
+
+4️⃣ Run Streamlit UI
 streamlit run streamlit_app.py
 
 📸 Screenshots
+📊 Dashboard UI
 
-## 📊 Dashboard UI
-![Dashboard](images/streamlit_dashboard.png)
+✅ Normal Transaction
 
-## ✅ Normal Transaction
-![Normal](images/normal_transaction.png)
+🚨 Fraud Detection Result
 
-## 📡 FastAPI Docs
-![API](images/fastapi_docs.png)
+📡 FastAPI Docs
+
+📂 Project Structure
+Credit Card Fraud Detection System/
+│
+├── api/
+│   └── app.py
+├── data/
+│   └── creditcard.csv
+├── images/
+├── models/
+├── src/
+│   └── train.py
+├── streamlit_app.py
+├── requirements.txt
+└── README.md
 
 👨‍💻 Author
 
